@@ -3,8 +3,8 @@
 
 ### DotnetCore ###
 # .NET Core build folders
-bin/
-obj/
+API/bin/
+API/obj/
 
 # Common node modules locations
 /node_modules
@@ -90,6 +90,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 ### VisualStudioCode ###
+client/.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -500,9 +501,38 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-### VisualStudio Patch ###
-# Additional files built by Visual Studio
+### Angular ###
+## Angular ##
+# compiled output
+dist/
+tmp/
+app/**/*.js
+app/**/*.js.map
 
+# dependencies
+bower_components/
+
+# IDEs and editors
+.idea/
+
+# misc
+connect.lock/
+coverage/
+libpeerconnection.log/
+npm-debug.log
+testem.log
+typings/
+.angular/
+
+# e2e
+e2e/*.js
+e2e/*.map
+
+# System Files
+.DS_Store/
+
+# End of https://www.toptal.com/developers/gitignore/api/angular
+.vscode/
 *.db-shm
 *.db-wal
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,rider,visualstudiocode,visualstudio## Ignore Visual Studio temporary files, build results, and
