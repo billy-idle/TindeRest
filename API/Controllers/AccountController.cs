@@ -24,7 +24,7 @@ public class AccountController : BaseApiController
         {
             return BadRequest("Username is taken");
         }
-        
+
         using var hmac = new HMACSHA512();
         var user = new AppUser
         {
@@ -35,6 +35,29 @@ public class AccountController : BaseApiController
 
         _dataContext.Users.Add(user);
         await _dataContext.SaveChangesAsync();
+
+        return user;
+    }
+
+    [HttpPost("login")]
+    public async Task<ActionResult<AppUser>> Login(LoginDto login)
+    {
+        var user = await _dataContext.Users.SingleOrDefaultAsync(x => x.Username == login.Username);
+        if (user == null)
+        {
+            return Unauthorized("Invalid User");
+        }
+
+        using var hmac = new HMACSHA512(user.PasswordSalt);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(login.Password));
+
+        for (int i = 0; i < computedHash.Length; i++)
+        {
+            if (computedHash[i] != user.PasswordHash[i])
+            {
+                return Unauthorized("Invalid Password");
+            }
+        }
 
         return user;
     }
