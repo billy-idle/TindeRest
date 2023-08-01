@@ -5,6 +5,7 @@ using API.DTO;
 using API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers;
 
@@ -16,8 +17,9 @@ public class AccountController : BaseApiController
     {
         _dataContext = dataContext;
     }
-
+    
     [HttpPost("register")] // POST: api/account/register
+    [SwaggerOperation(Summary = "Register a new user", Description = "I don't know what to describe")]
     public async Task<ActionResult<AppUser>> Register(RegisterDto registerDto)
     {
         if (await UserExists(registerDto.Username))
