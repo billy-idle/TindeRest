@@ -3,6 +3,8 @@ using System.Text;
 using API.Data;
 using API.DTO;
 using API.Entities;
+using API.Interfaces;
+using API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,15 +14,17 @@ namespace API.Controllers;
 public class AccountController : BaseApiController
 {
     private readonly DataContext _dataContext;
+    private readonly ITokenService _tokenService;
 
-    public AccountController(DataContext dataContext)
+    public AccountController(DataContext dataContext, ITokenService tokenService)
     {
         _dataContext = dataContext;
+        _tokenService = tokenService;
     }
-    
+
     [HttpPost("register")] // POST: api/account/register
     [SwaggerOperation(Summary = "Register a new user", Description = "I don't know what to describe")]
-    public async Task<ActionResult<AppUser>> Register(RegisterDto registerDto)
+    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
         if (await UserExists(registerDto.Username))
         {
@@ -38,11 +42,15 @@ public class AccountController : BaseApiController
         _dataContext.Users.Add(user);
         await _dataContext.SaveChangesAsync();
 
-        return user;
+        return new UserDto()
+        {
+            Username = user.Username,
+            Token = _tokenService.CreateToken(user)
+        };
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<AppUser>> Login(LoginDto login)
+    public async Task<ActionResult<UserDto>> Login(LoginDto login)
     {
         var user = await _dataContext.Users.SingleOrDefaultAsync(x => x.Username == login.Username);
         if (user == null)
@@ -61,7 +69,11 @@ public class AccountController : BaseApiController
             }
         }
 
-        return user;
+        return new UserDto
+        {
+            Username = user.Username,
+            Token = _tokenService.CreateToken(user)
+        };
     }
 
     private async Task<bool> UserExists(string username)
